@@ -1,410 +1,1005 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Quiz Kotoba — (Fixed Conjugation)</title>
-<style>
-:root{
-  --bg:#041026; --card:#0b1220; --muted:#9aa6b2; --accent:#ff7a2d; --accent-2:#ffb077; --ok:#22c55e; --bad:#ef4444;
-  --glass: rgba(255,255,255,0.03);
-}
-*{box-sizing:border-box}
-body{margin:0;font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto; background:linear-gradient(180deg,#041022 0%, #071026 60%); color:#eaf2ff; -webkit-font-smoothing:antialiased;}
-.app{max-width:920px;margin:18px auto;padding:12px;}
-.hero{display:flex;flex-direction:column;align-items:center;gap:12px;background:linear-gradient(180deg, rgba(255,255,255,0.02), transparent);border-radius:14px;padding:16px;border:1px solid rgba(255,255,255,0.04);box-shadow:0 10px 30px rgba(2,6,23,0.6); margin-bottom:16px;}
-.title{font-size:1.25rem;font-weight:700;}
-.subtitle{font-size:0.92rem;color:var(--muted);text-align:center;max-width:88%}
-.controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:center;margin-top:8px;}
-.select, input[type=number]{background:var(--glass);border:1px solid rgba(255,255,255,0.04);padding:10px 12px;border-radius:10px;color:inherit;font-size:0.95rem;min-width:120px;}
-.btn{padding:10px 14px;border-radius:12px;border:none;cursor:pointer;font-weight:700}
-.btn-primary{background:linear-gradient(90deg,var(--accent),var(--accent-2));color:#081026;box-shadow:0 8px 18px rgba(255,122,45,0.12)}
-.btn-ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);color:inherit}
-.card{background:var(--card);border-radius:12px;padding:14px;margin-bottom:12px;border:1px solid rgba(255,255,255,0.03);box-shadow:0 6px 18px rgba(2,6,23,0.5);}
-.verb{font-size:1.5rem;font-weight:700;margin-bottom:6px}
-.hint{color:var(--muted);font-size:0.9rem;margin-bottom:12px}
-.input-block{display:flex;flex-direction:column;gap:8px}
-.input-row{display:flex;gap:8px;align-items:center}
-.input-row input{flex:1;padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,0.04);background:var(--glass);font-size:1.05rem;color:inherit}
-.small-btn{padding:8px 10px;border-radius:10px;border:none;background:transparent;color:inherit;cursor:pointer}
-.feedback{margin-top:8px;font-size:0.95rem}
-.card-correct{background:linear-gradient(90deg, rgba(34,197,94,0.08), rgba(255,255,255,0.02));border-color:rgba(34,197,94,0.14)}
-.card-wrong{background:linear-gradient(90deg, rgba(239,68,68,0.06), rgba(255,255,255,0.02));border-color:rgba(239,68,68,0.12)}
-.result-bar{display:flex;gap:8px;justify-content:center;margin:10px 0;flex-wrap:wrap}
-.chip{padding:8px 12px;border-radius:999px;background:rgba(255,255,255,0.02);font-weight:700;color:var(--muted)}
-.table{width:100%;border-collapse:collapse;font-size:0.95rem}
-.table th,.table td{padding:10px;border-bottom:1px solid rgba(255,255,255,0.03);text-align:left}
-.table th{color:var(--muted);font-weight:700;font-size:0.88rem}
-@media (max-width:540px){ .verb{font-size:1.35rem} .title{font-size:1.12rem} .select{min-width:110px} .hero{padding:14px} }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gemini API Key Tester - Rincian Struk</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Share+Tech+Mono&display=swap');
+        
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+        
+        .receipt-font {
+            font-family: 'Share Tech Mono', monospace;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #1e293b;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #475569;
+            border-radius: 3px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #64748b;
+        }
+
+        /* Thermal receipt styling */
+        .receipt-paper {
+            background-color: #fcfcf9;
+            color: #1c1c1c;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3), 0 8px 10px -6px rgba(0, 0, 0, 0.3);
+            position: relative;
+        }
+        .receipt-paper::before {
+            content: "";
+            position: absolute;
+            top: -8px;
+            left: 0;
+            width: 100%;
+            height: 8px;
+            background-image: linear-gradient(135deg, #fcfcf9 25%, transparent 25%), linear-gradient(225deg, #fcfcf9 25%, transparent 25%);
+            background-size: 16px 16px;
+            background-position: 0 0;
+        }
+        .receipt-paper::after {
+            content: "";
+            position: absolute;
+            bottom: -8px;
+            left: 0;
+            width: 100%;
+            height: 8px;
+            background-image: linear-gradient(45deg, #fcfcf9 25%, transparent 25%), linear-gradient(-45deg, #fcfcf9 25%, transparent 25%);
+            background-size: 16px 16px;
+            background-position: 0 0;
+        }
+    </style>
 </head>
-<body>
-  <div class="app">
-    <section class="hero" role="banner">
-      <div class="title">Quiz Kotoba — Bentuk て / ない (Perbaikan Konjugasi)</div>
-      <div class="subtitle">Perbaikan konversi untuk Gol I/II/III — kini menangani します/きます/compound dengan benar.</div>
-      <div class="controls">
-        <select id="start-gol" class="select"><option value="ALL">Semua Golongan</option><option value="I">Golongan I</option><option value="II">Golongan II</option><option value="III">Golongan III</option></select>
-        <select id="start-form" class="select"><option value="te">て</option><option value="nai">ない</option><option value="both">て & ない</option></select>
-        <input id="start-count" type="number" class="select" min="1" max="50" value="10">
-        <button id="btn-start" class="btn btn-primary">Mulai</button>
-        <button id="btn-list" class="btn btn-ghost">Daftar</button>
-      </div>
-    </section>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col custom-scrollbar">
 
-    <main id="main"></main>
-
-    <div id="result-bar" class="result-bar" style="display:none;">
-      <div class="chip">Benar: <span id="score-true">0</span></div>
-      <div class="chip">Salah: <span id="score-false">0</span></div>
-      <div class="chip">Sisa: <span id="remaining">0</span></div>
-      <div style="display:flex;gap:8px">
-        <button id="btn-checkall" class="btn btn-ghost">Periksa Semua</button>
-        <button id="btn-showanswers" class="btn btn-ghost">Tampilkan Jawaban</button>
-        <button id="btn-new" class="btn btn-ghost">Buat Baru</button>
-      </div>
-    </div>
-
-    <section id="list-panel" class="card" style="display:none;">
-      <div style="display:flex;gap:8px;align-items:center;margin-bottom:10px">
-        <label style="color:var(--muted);font-weight:700">Tampilkan:</label>
-        <select id="list-filter" class="select" style="min-width:130px"><option value="ALL">Semua Golongan</option><option value="I">Golongan I</option><option value="II">Golongan II</option><option value="III">Golongan III</option></select>
-        <div style="margin-left:auto;display:flex;gap:8px">
-          <button id="btn-export" class="btn btn-ghost">Copy</button>
-          <button id="btn-close-list" class="btn btn-ghost">Tutup</button>
+    <!-- Header -->
+    <header class="border-b border-slate-800 bg-slate-900/80 backdrop-blur sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 py-4 flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-3">
+                <div class="p-2 bg-indigo-600 rounded-lg text-white shadow-lg shadow-indigo-500/30">
+                    <i class="fa-solid fa-receipt text-2xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold tracking-tight text-white">Gemini API Tester</h1>
+                    <p class="text-xs text-slate-400">Pengujian Membaca & Menulis Rincian Struk Belanja</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-2">
+                <span class="text-xs text-slate-400">Status API:</span>
+                <span id="global-status-badge" class="px-3 py-1 text-xs font-semibold rounded-full bg-slate-800 text-slate-400 border border-slate-700">
+                    <i class="fa-solid fa-circle-notch mr-1 animate-pulse"></i> Belum Dikonfigurasi
+                </span>
+            </div>
         </div>
-      </div>
+    </header>
 
-      <table class="table"><thead><tr><th style="width:54px">#</th><th>ます形</th><th>Arti</th><th style="width:64px">Gol</th></tr></thead><tbody id="table-body"></tbody></table>
-    </section>
-  </div>
+    <!-- Main Content -->
+    <main class="flex-1 max-w-7xl w-full mx-auto p-4 grid grid-cols-1 lg:grid-cols-12 gap-6">
+        
+        <!-- Left Column: Config & Logs (4 Cols) -->
+        <div class="lg:col-span-4 flex flex-col gap-6">
+            
+            <!-- Card 1: API Config -->
+            <section class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="font-bold text-white flex items-center gap-2">
+                        <i class="fa-solid fa-key text-indigo-400"></i> Konfigurasi API Key
+                    </h2>
+                    <span class="text-xs text-slate-500 bg-slate-800 px-2 py-0.5 rounded">v2.5-flash</span>
+                </div>
+                
+                <div class="space-y-4">
+                    <div>
+                        <label for="api-key-input" class="block text-xs font-medium text-slate-400 mb-1">Gemini API Key</label>
+                        <div class="relative">
+                            <input type="password" id="api-key-input" placeholder="AIzaSy..." 
+                                class="w-full bg-slate-950 border border-slate-700 rounded-xl py-2.5 pl-3 pr-10 text-sm text-slate-200 placeholder-slate-600 focus:outline-none focus:border-indigo-500 transition-all receipt-font tracking-wider">
+                            <button type="button" id="toggle-key-btn" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300">
+                                <i class="fa-solid fa-eye"></i>
+                            </button>
+                        </div>
+                        <p class="text-[10px] text-slate-500 mt-1">API Key Anda diproses hanya secara lokal di browser Anda.</p>
+                    </div>
 
-<script>
-/* ---------- Improved conjugation logic (reliable) ---------- */
+                    <div class="flex gap-2">
+                        <button id="btn-save-key" class="flex-1 bg-indigo-600 hover:bg-indigo-500 text-white font-medium text-xs py-2.5 rounded-xl transition-all flex items-center justify-center gap-2 shadow-md shadow-indigo-600/15">
+                            <i class="fa-solid fa-floppy-disk"></i> Simpan Key
+                        </button>
+                        <button id="btn-test-connection" class="flex-1 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 font-medium text-xs py-2.5 rounded-xl transition-all flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-vial"></i> Tes Koneksi
+                        </button>
+                    </div>
+                </div>
+            </section>
 
-/* mapping i-row kana -> u-row kana (untuk membuat bentuk kamus dari stem-ます) */
-const I_TO_U = {
-  'い':'う','き':'く','し':'す','ち':'つ','に':'ぬ','ひ':'ふ','み':'む','り':'る',
-  'ぎ':'ぐ','じ':'ず','ぢ':'づ','び':'ぶ','ぴ':'ぷ'
-};
+            <!-- Card 2: Konsol Log Realtime -->
+            <section class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl flex-1 flex flex-col min-h-[300px]">
+                <div class="flex items-center justify-between mb-3">
+                    <h2 class="font-bold text-white flex items-center gap-2 text-sm">
+                        <i class="fa-solid fa-terminal text-emerald-400"></i> Konsol Aktivitas & Log
+                    </h2>
+                    <button id="btn-clear-logs" class="text-xs text-slate-500 hover:text-slate-300">Hapus</button>
+                </div>
+                
+                <div id="log-container" class="flex-1 bg-slate-950 border border-slate-800 rounded-xl p-3 text-[11px] font-mono text-slate-300 overflow-y-auto space-y-2 h-[280px] custom-scrollbar">
+                    <div class="text-slate-500">// Menunggu konfigurasi API Key...</div>
+                </div>
+            </section>
+        </div>
 
-/* mapping u-row -> a-row (untuk nai-form godan) */
-const U_TO_A = {
-  'う':'わ','く':'か','す':'さ','つ':'た','ぬ':'な','ふ':'は','む':'ま','る':'ら',
-  'ぐ':'が','ぶ':'ば','ぷ':'ぱ','ず':'ざ'
-};
+        <!-- Right Column: Testing Workbench (8 Cols) -->
+        <div class="lg:col-span-8 flex flex-col gap-6">
+            
+            <!-- Tab Navigation -->
+            <div class="flex bg-slate-900 p-1.5 rounded-xl border border-slate-800 gap-1">
+                <button id="tab-read" class="flex-1 py-3 px-4 rounded-lg font-semibold text-xs text-center transition-all flex items-center justify-center gap-2 bg-indigo-600 text-white shadow">
+                    <i class="fa-solid fa-file-invoice"></i> TES 1: Membaca Struk (Read/OCR)
+                </button>
+                <button id="tab-write" class="flex-1 py-3 px-4 rounded-lg font-semibold text-xs text-center text-slate-400 hover:bg-slate-800/50 hover:text-slate-200 transition-all flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-pen-to-square"></i> TES 2: Menulis Struk (Write/Format)
+                </button>
+            </div>
 
-function trimStr(s){ return (s||'').trim(); }
+            <!-- TAB 1: MEMBACA STRUK -->
+            <div id="section-read" class="space-y-6">
+                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-6">
+                    <div>
+                        <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                            <i class="fa-solid fa-camera text-indigo-400"></i> Membaca & Ekstrak Data Struk
+                        </h3>
+                        <p class="text-xs text-slate-400 mt-1">Menguji kemampuan multimodal Gemini untuk memindai gambar struk belanjaan dan menyajikannya dalam skema JSON terstruktur secara konsisten.</p>
+                    </div>
 
-/* convert masu-form -> dictionary (kamus) form, using golongan when available */
-function masuToDictionary(masu, gol){
-  masu = trimStr(masu);
-  if(!masu) return '';
+                    <!-- Input Image Area -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="border-2 border-dashed border-slate-700 rounded-xl p-4 flex flex-col items-center justify-center text-center bg-slate-950/50 relative overflow-hidden group min-h-[220px]">
+                            <input type="file" id="receipt-file" accept="image/*" class="absolute inset-0 opacity-0 cursor-pointer z-10">
+                            
+                            <!-- State 1: Empty -->
+                            <div id="upload-placeholder" class="space-y-2 pointer-events-none transition-all group-hover:scale-105 duration-200">
+                                <i class="fa-solid fa-cloud-arrow-up text-4xl text-slate-600 group-hover:text-indigo-400 transition-colors"></i>
+                                <div class="text-xs font-semibold text-slate-300">Unggah Gambar Struk Anda</div>
+                                <div class="text-[10px] text-slate-500">Format: PNG, JPG, WebP</div>
+                            </div>
 
-  // 1) handle します family (べんきょうします, じゅんびします, etc.)
-  if(masu.endsWith('します')){
-    // remove the trailing 'します' (3 chars) and add 'する'
-    const base = masu.slice(0, masu.length - 3); // before 'します'
-    return base + 'する'; // e.g., じゅんびする
-  }
+                            <!-- State 2: Preview -->
+                            <img id="image-preview" class="absolute inset-0 w-full h-full object-contain hidden bg-slate-900 p-2" alt="Preview Struk">
+                        </div>
 
-  // 2) exact きます (kuru) or compounds with kuru (if labeled III)
-  if(masu === 'きます') return 'くる';
+                        <!-- Generator Struk Otomatis (Jika tidak punya struk asli) -->
+                        <div class="bg-slate-950 border border-slate-800 rounded-xl p-4 flex flex-col justify-between">
+                            <div>
+                                <h4 class="text-xs font-bold text-slate-300 mb-1 flex items-center gap-1.5">
+                                    <i class="fa-solid fa-wand-magic-sparkles text-amber-400"></i> Tidak punya gambar struk?
+                                </h4>
+                                <p class="text-[11px] text-slate-400 leading-relaxed mb-3">Tekan tombol di bawah untuk membuat gambar struk belanja simulasi secara instan menggunakan Canvas HTML untuk bahan pengujian.</p>
+                            </div>
+                            
+                            <!-- Canvas tersembunyi untuk membuat gambar struk -->
+                            <canvas id="mock-receipt-canvas" width="350" height="500" class="hidden"></canvas>
 
-  if(gol === 'III' && masu.endsWith('きます')){
-    // compound like もってきます -> 基本 = 'もって' + 'くる'
-    const base = masu.slice(0, masu.length - 3);
-    return base + 'くる';
-  }
+                            <div class="space-y-2">
+                                <button id="btn-generate-mock" class="w-full bg-slate-800 hover:bg-slate-700 text-amber-400 border border-slate-700 hover:border-amber-500/30 text-xs py-2 px-3 rounded-lg transition-all flex items-center justify-center gap-2">
+                                    <i class="fa-solid fa-receipt"></i> Buat Struk Toko Kopi (Simulasi)
+                                </button>
+                                <button id="btn-generate-mock-super" class="w-full bg-slate-800 hover:bg-slate-700 text-teal-400 border border-slate-700 hover:border-teal-500/30 text-xs py-2 px-3 rounded-lg transition-all flex items-center justify-center gap-2">
+                                    <i class="fa-solid fa-cart-shopping"></i> Buat Struk Minimarket (Simulasi)
+                                </button>
+                            </div>
+                        </div>
+                    </div>
 
-  // 3) If Golongan II (ichidan) -> stem + 'る'
-  if(gol === 'II'){
-    const stem = masu.endsWith('ます') ? masu.slice(0, -2) : masu;
-    return stem + 'る';
-  }
+                    <div class="flex justify-end pt-2 border-t border-slate-800">
+                        <button id="btn-start-read-test" class="bg-indigo-600 hover:bg-indigo-500 disabled:bg-slate-800 disabled:text-slate-500 text-white font-semibold text-xs py-3 px-6 rounded-xl transition-all flex items-center gap-2 shadow-lg shadow-indigo-600/20">
+                            <i class="fa-solid fa-circle-play"></i> Mulai Ekstraksi (Membaca)
+                        </button>
+                    </div>
+                </div>
 
-  // 4) If Golongan I (godan) -> replace final i-row kana with u-row
-  if(gol === 'I'){
-    if(!masu.endsWith('ます')) return masu;
-    const stem = masu.slice(0, -2); // remove ます => e.g., かき
-    if(stem.length === 0) return masu;
-    const last = stem[stem.length - 1];
-    const base = stem.slice(0, -1);
-    const u = I_TO_U[last];
-    if(u) return base + u;
-    // fallback: append る
-    return stem + 'る';
-  }
+                <!-- Result Area Membaca -->
+                <div id="read-result-area" class="hidden grid grid-cols-1 md:grid-cols-12 gap-6">
+                    <!-- JSON Data -->
+                    <div class="md:col-span-7 bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl flex flex-col">
+                        <div class="flex items-center justify-between mb-3">
+                            <h3 class="font-bold text-emerald-400 text-xs tracking-wider uppercase flex items-center gap-1.5">
+                                <i class="fa-solid fa-square-poll-horizontal"></i> Hasil Ekstraksi JSON (Gemini)
+                            </h3>
+                            <span class="text-[10px] text-slate-400 px-2 py-0.5 bg-slate-800 rounded flex items-center gap-1">
+                                <i class="fa-solid fa-clock"></i> <span id="read-latency">0s</span>
+                            </span>
+                        </div>
+                        <div class="bg-slate-950 border border-slate-800 rounded-xl p-3 flex-1">
+                            <pre id="json-output" class="text-[11px] font-mono text-emerald-300 overflow-x-auto whitespace-pre-wrap max-h-[400px] custom-scrollbar"></pre>
+                        </div>
+                    </div>
 
-  // 5) Unknown golongan: try heuristics
-  if(masu.endsWith('ます')){
-    const stem = masu.slice(0, -2);
-    // heuristic: if stem ends with e-row (え) or i-row (い) kana -> likely ichidan
-    const eRow = ['え','け','せ','て','ね','へ','め','れ','げ','ぜ','で','べ','ぺ'];
-    const last = stem[stem.length-1];
-    if(!last) return masu;
-    if(['え','け','せ','て','ね','へ','め','れ','げ','ぜ','で','べ','ぺ'].includes(last)) {
-      return stem + 'る'; // guess ichidan
-    }
-    // otherwise guess godan
-    const lastI = last;
-    const u = I_TO_U[lastI];
-    if(u) return stem.slice(0,-1) + u;
-    return stem + 'る';
-  }
+                    <!-- Visual Struk Terjemahan -->
+                    <div class="md:col-span-5 bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl flex flex-col">
+                        <h3 class="font-bold text-slate-300 text-xs tracking-wider uppercase mb-3 flex items-center gap-1.5">
+                            <i class="fa-solid fa-circle-info"></i> Visualisasi Data Terbaca
+                        </h3>
+                        <div id="visualized-receipt" class="receipt-paper p-6 text-xs receipt-font flex flex-col gap-2 rounded-sm shadow-inner text-slate-800 select-none">
+                            <div class="text-center font-bold uppercase text-sm border-b border-dashed border-slate-400 pb-2" id="v-store">NAMA TOKO</div>
+                            <div class="flex justify-between text-[10px] border-b border-dashed border-slate-400 pb-2 mb-2">
+                                <span>TGL: <span id="v-date">00-00-0000</span></span>
+                                <span>PEMINDAL: GEMINI-AI</span>
+                            </div>
+                            
+                            <!-- Items List -->
+                            <div id="v-items-list" class="space-y-1.5 flex-1 min-h-[120px]">
+                                <!-- Dinamis -->
+                            </div>
 
-  // fallback
-  return masu;
-}
+                            <div class="border-t border-dashed border-slate-400 pt-2 mt-2 space-y-1">
+                                <div class="flex justify-between font-bold text-sm">
+                                    <span>TOTAL</span>
+                                    <span id="v-total">Rp 0</span>
+                                </div>
+                            </div>
+                            <div class="text-[9px] text-center text-slate-500 mt-6 border-t border-dashed border-slate-400 pt-2">
+                                DATA INI BERHASIL DIBACA & DIKIRIM OLEH GEMINI API
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-/* from dictionary form -> te-form */
-function dictToTe(dic, gol){
-  if(!dic) return '';
-  // handle 'くる' (kuru) irregular and compounds ending with 'くる'
-  if(dic.endsWith('くる')){
-    const base = dic.slice(0, dic.length - 2); // remove くる
-    return base + 'きて'; // e.g., もってくる -> もってきて
-  }
-  // handle 'する' and compounds
-  if(dic.endsWith('する')){
-    const base = dic.slice(0, dic.length - 2);
-    return base + 'して';
-  }
+            <!-- TAB 2: MENULIS STRUK -->
+            <div id="section-write" class="hidden space-y-6">
+                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-6">
+                    <div>
+                        <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                            <i class="fa-solid fa-pen-to-square text-indigo-400"></i> Membuat & Memformat Struk Baru
+                        </h3>
+                        <p class="text-xs text-slate-400 mt-1">Menguji kemampuan Gemini dalam menghasilkan konten teks kreatif, menyusun ulang rincian belanja berantakan menjadi struk berformat kasir (ASCII) yang rapi.</p>
+                    </div>
 
-  // special-case 'いく' -> 'いって'
-  if(dic === 'いく') return 'いって';
+                    <div class="space-y-4">
+                        <div>
+                            <label for="write-raw-input" class="block text-xs font-medium text-slate-400 mb-1">Rincian Belanja Mentah (Ketik Sesuka Hati)</label>
+                            <textarea id="write-raw-input" rows="4" placeholder="Contoh: tadi malam makan di warung padang minang jaya, beli nasi rendang 2 porsi, es teh manis 2 gelas, sama kerupuk kulit 1 bungkus. Total semuanya habis seratus dua puluh ribu rupiah." 
+                                class="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 text-xs text-slate-200 placeholder-slate-600 focus:outline-none focus:border-indigo-500 transition-all leading-relaxed"></textarea>
+                        </div>
 
-  const last = dic[dic.length - 1];
-  const body = dic.slice(0, -1);
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label for="write-style-select" class="block text-xs font-medium text-slate-400 mb-1">Gaya Output Struk</label>
+                                <select id="write-style-select" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-xs text-slate-200 focus:outline-none focus:border-indigo-500">
+                                    <option value="kasir-klasik">Kasir Klasik Retro (ASCII Art)</option>
+                                    <option value="modern-kafe">Kafe Estetik Modern</option>
+                                    <option value="belanja-bulanan">Hipermarket Rapi</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="write-currency-input" class="block text-xs font-medium text-slate-400 mb-1">Mata Uang & Lokalisasi</label>
+                                <input type="text" id="write-currency-input" value="Rupiah (IDR / Rp)" placeholder="Misal: Rp atau USD" 
+                                    class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-xs text-slate-200 focus:outline-none focus:border-indigo-500">
+                            </div>
+                        </div>
+                    </div>
 
-  // rules for u-ending verbs:
-  if(['う','つ','る'].includes(last)) return body + 'って';
-  if(['ぬ','ぶ','む'].includes(last)) return body + 'んで';
-  if(last === 'く') return body + 'いて';
-  if(last === 'ぐ') return body + 'いで';
-  if(last === 'す') return body + 'して';
+                    <div class="flex justify-between items-center pt-2 border-t border-slate-800">
+                        <button id="btn-load-raw-sample" class="text-xs text-indigo-400 hover:text-indigo-300 transition-colors">
+                            <i class="fa-solid fa-pencil mr-1"></i> Gunakan Contoh Belanjaan Mentah
+                        </button>
+                        <button id="btn-start-write-test" class="bg-indigo-600 hover:bg-indigo-500 disabled:bg-slate-800 disabled:text-slate-500 text-white font-semibold text-xs py-3 px-6 rounded-xl transition-all flex items-center gap-2 shadow-lg shadow-indigo-600/20">
+                            <i class="fa-solid fa-paper-plane"></i> Kirim & Tulis Struk
+                        </button>
+                    </div>
+                </div>
 
-  // fallback
-  return dic + 'て';
-}
+                <!-- Result Area Menulis -->
+                <div id="write-result-area" class="hidden grid grid-cols-1 md:grid-cols-12 gap-6">
+                    <!-- Narasi AI -->
+                    <div class="md:col-span-5 bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl flex flex-col">
+                        <div class="flex items-center justify-between mb-3">
+                            <h3 class="font-bold text-indigo-400 text-xs tracking-wider uppercase flex items-center gap-1.5">
+                                <i class="fa-solid fa-message"></i> Analisis AI & Ringkasan
+                            </h3>
+                            <span class="text-[10px] text-slate-400 px-2 py-0.5 bg-slate-800 rounded flex items-center gap-1">
+                                <i class="fa-solid fa-clock"></i> <span id="write-latency">0s</span>
+                            </span>
+                        </div>
+                        <div id="write-analysis-box" class="bg-slate-950 border border-slate-800 rounded-xl p-4 text-xs text-slate-300 leading-relaxed flex-1 space-y-3">
+                            <!-- Dinamis -->
+                        </div>
+                    </div>
 
-/* from dictionary form -> nai-form */
-function dictToNai(dic, gol){
-  if(!dic) return '';
-  // handle 'くる' (kuru)
-  if(dic.endsWith('くる')){
-    const base = dic.slice(0, dic.length - 2);
-    return base + 'こない'; // もってくる -> もってこない
-  }
-  // handle 'する'
-  if(dic.endsWith('する')){
-    const base = dic.slice(0, dic.length - 2);
-    return base + 'しない';
-  }
-  // ichidan simple
-  if(gol === 'II' || dic.endsWith('る') && isLikelyIchidan(dic)){
-    if(dic.endsWith('る')) return dic.slice(0, -1) + 'ない';
-  }
-  // godan: replace last u with a-row + ない
-  const last = dic[dic.length - 1];
-  const body = dic.slice(0, -1);
-  const a = U_TO_A[last];
-  if(a) return body + a + 'ない';
-  // fallback: if ends with 'る' and not matched above
-  if(dic.endsWith('る')) return dic.slice(0,-1) + 'らない';
-  return dic + 'ない';
-}
+                    <!-- Output ASCII Receipt -->
+                    <div class="md:col-span-7 bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl flex flex-col">
+                        <div class="flex items-center justify-between mb-3">
+                            <h3 class="font-bold text-slate-300 text-xs tracking-wider uppercase flex items-center gap-1.5">
+                                <i class="fa-solid fa-receipt"></i> Hasil Desain Struk (ASCII)
+                            </h3>
+                            <button id="btn-copy-receipt" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1 rounded-lg border border-slate-700 flex items-center gap-1 transition-all">
+                                <i class="fa-solid fa-copy"></i> Salin Teks
+                            </button>
+                        </div>
+                        
+                        <div class="receipt-paper p-6 text-xs receipt-font rounded-sm shadow-inner text-slate-800 select-all overflow-x-auto custom-scrollbar">
+                            <pre id="write-ascii-output" class="whitespace-pre text-center inline-block min-w-full text-[11px] leading-tight"></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-/* small heuristic: check if a dictionary form ending with る is likely ichidan
-   (only used as a safe fallback when golongan is unknown).
-   This is imperfect but avoids breaking many verbs: if preceding vowel is e-row or i-row -> ichidan likely.
-*/
-function isLikelyIchidan(dic){
-  if(!dic.endsWith('る')) return false;
-  const prev = dic[dic.length-2];
-  // list of i-row / e-row kana preceding る that often indicate ichidan
-  const eRow = ['え','け','せ','て','ね','へ','め','れ','げ','ぜ','で','べ','ぺ'];
-  const iRow = ['い','き','し','ち','に','ひ','み','り','ぎ','じ','ぢ','び','ぴ'];
-  return eRow.includes(prev) || iRow.includes(prev);
-}
+        </div>
 
-/* wrapper: given masu-form + golongan -> return {te, nai, dict} */
-function conjugateFromMasu(masu, gol){
-  const dic = masuToDictionary(masu, gol);
-  const te = dictToTe(dic, gol);
-  const nai = dictToNai(dic, gol);
-  return { dict, te, nai };
-}
+    </main>
 
-/* ---------- Basic app (UI) using the improved conjugator ---------- */
+    <!-- Custom Modal Popup Toast (Sebagai pengganti alert()) -->
+    <div id="toast-container" class="fixed bottom-6 right-6 z-50 flex flex-col gap-3 max-w-sm w-full"></div>
 
-let DB = [];
-const FALLBACK = [
-  {id:1,verba_masu:'かきます',hiragana:'かきます',arti:'Menulis',golongan:'I'},
-  {id:2,verba_masu:'たべます',hiragana:'たべます',arti:'Makan',golongan:'II'},
-  {id:3,verba_masu:'きます',hiragana:'きます',arti:'Datang',golongan:'III'},
-  {id:4,verba_masu:'します',hiragana:'します',arti:'Melakukan',golongan:'III'},
-  {id:5,verba_masu:'のります',hiragana:'のります',arti:'Naik',golongan:'I'}
-];
+    <!-- Footer -->
+    <footer class="border-t border-slate-900 bg-slate-950 py-6 mt-12 text-center text-xs text-slate-500">
+        <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row justify-between items-center gap-4">
+            <p>© 2026 Gemini API Tester. Dirancang untuk pengujian struktural rincian struk.</p>
+            <div class="flex gap-4">
+                <a href="https://ai.google.dev" target="_blank" class="hover:text-slate-300 transition-colors">Gemini AI Portal</a>
+                <span class="text-slate-700">|</span>
+                <span class="text-slate-400">Model: gemini-2.5-flash-preview-09-2025</span>
+            </div>
+        </div>
+    </footer>
 
-async function loadDB(){
-  try{
-    const res = await fetch('kotoba_database.json', {cache:'no-store'});
-    if(!res.ok) throw new Error('not found');
-    const json = await res.json();
-    if(Array.isArray(json) && json.length) DB = json.map((x,idx)=>({ id: x.id ?? idx+1, verba_masu: x.verba_masu || x.hiragana || '', hiragana: x.hiragana || x.verba_masu || '', arti: x.arti || x.arti || '', golongan: (x.golongan||'') }));
-    else DB = FALLBACK.slice();
-  }catch(e){
-    console.warn('Gagal load kotoba_database.json, pakai fallback', e);
-    DB = FALLBACK.slice();
-  }
-}
+    <!-- Core App Logic -->
+    <script>
+        // --- KONFIGURASI STATE & GLOBAL VARIABLES ---
+        let config = {
+            apiKey: '',
+            status: 'unconfigured', // 'unconfigured', 'testing', 'valid', 'invalid'
+            lastTested: null
+        };
 
-/* QUIZ state and rendering (same UI pattern as sebelumnya) */
-let QUIZ = [];
-const mainEl = document.getElementById('main');
-const resultBar = document.getElementById('result-bar');
-const scoreTrue = document.getElementById('score-true');
-const scoreFalse = document.getElementById('score-false');
-const remainingEl = document.getElementById('remaining');
-const tableBody = document.getElementById('table-body');
+        const API_MODEL = 'gemini-2.5-flash-preview-09-2025';
 
-function pickSample(pool,n){
-  const arr = pool.slice(); const out=[];
-  while(out.length < n && arr.length){
-    const i = Math.floor(Math.random()*arr.length);
-    out.push(arr.splice(i,1)[0]);
-  }
-  return out;
-}
+        // Load Key jika sebelumnya pernah disimpan di memory sesi
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedKey = sessionStorage.getItem('gemini_api_key_test');
+            if (savedKey) {
+                document.getElementById('api-key-input').value = savedKey;
+                config.apiKey = savedKey;
+                updateStatus('valid', 'API Key dimuat dari sesi saat ini');
+                appendLog('system', 'Menemukan API Key di memori sesi sementara. Siap digunakan.');
+            }
+            
+            // Inisialisasi Canvas simulasi struk saat start
+            generateMockReceiptCanvas('kopi');
+        });
 
-function startQuiz(){
-  const g = document.getElementById('start-gol').value;
-  const form = document.getElementById('start-form').value;
-  let count = parseInt(document.getElementById('start-count').value) || 10;
-  const pool = (g === 'ALL') ? DB.slice() : DB.filter(x => String(x.golongan) === String(g));
-  if(pool.length === 0){ alert('Tidak ada data untuk pilihan golongan ini.'); return; }
-  const sample = pickSample(pool, Math.min(count, pool.length));
-  QUIZ = sample.map(it => ({
-    item: it,
-    expected: { te: dictToTe(masuToDictionary(it.hiragana || it.verba_masu, it.golongan), it.golongan), nai: dictToNai(masuToDictionary(it.hiragana || it.verba_masu, it.golongan), it.golongan) },
-    user: { te:'', nai:'' },
-    status: 'unanswered'
-  }));
-  renderQuiz(form);
-  window.scrollTo({top:0,behavior:'smooth'});
-}
+        // --- CUSTOM TOAST SYSTEM ---
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            
+            let bgClass = 'bg-slate-900 border-slate-800 text-slate-100';
+            let iconClass = 'fa-info-circle text-indigo-400';
+            
+            if (type === 'success') {
+                bgClass = 'bg-emerald-950 border-emerald-800 text-emerald-100';
+                iconClass = 'fa-check-circle text-emerald-400';
+            } else if (type === 'error') {
+                bgClass = 'bg-rose-950 border-rose-800 text-rose-100';
+                iconClass = 'fa-exclamation-triangle text-rose-400';
+            } else if (type === 'warning') {
+                bgClass = 'bg-amber-950 border-amber-800 text-amber-100';
+                iconClass = 'fa-exclamation-circle text-amber-400';
+            }
 
-function renderQuiz(form){
-  mainEl.innerHTML = '';
-  QUIZ.forEach((q,idx) => {
-    const card = document.createElement('article');
-    card.className = 'card';
-    card.dataset.idx = idx;
-    card.innerHTML = `
-      <div class="verb">${q.item.hiragana || q.item.verba_masu}</div>
-      <div class="hint">${q.item.arti || ''} — Gol ${q.item.golongan || ''}</div>
-      <div class="input-block">
-        ${ (form==='te' || form==='both') ? `<div class="input-row"><input inputmode="kana" autocomplete="off" data-role="te" placeholder="Bentuk て (hiragana)"></div>` : '' }
-        ${ (form==='nai' || form==='both') ? `<div class="input-row"><input inputmode="kana" autocomplete="off" data-role="nai" placeholder="Bentuk ない (hiragana)"></div>` : '' }
-        <div style="display:flex;justify-content:flex-end;margin-top:6px"><button class="small-btn" data-action="check">Cek</button></div>
-        <div class="feedback" id="fb-${idx}"></div>
-      </div>
-    `;
-    card.querySelectorAll('input[data-role]').forEach(inp=>{
-      inp.addEventListener('input', ()=>{ q.user[inp.dataset.role] = inp.value.trim(); });
-      inp.addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); checkSingle(idx); }});
-    });
-    card.querySelector('button[data-action="check"]').addEventListener('click', ()=>checkSingle(idx));
-    mainEl.appendChild(card);
-  });
-  resultBar.style.display = 'flex';
-  updateScores();
-}
+            toast.className = `p-4 rounded-xl border ${bgClass} shadow-2xl flex items-start gap-3 transition-all duration-300 opacity-0 translate-y-4`;
+            toast.innerHTML = `
+                <i class="fa-solid ${iconClass} mt-0.5 text-lg"></i>
+                <div class="flex-1">
+                    <p class="text-xs font-semibold">${message}</p>
+                </div>
+                <button onclick="this.parentElement.remove()" class="text-slate-400 hover:text-slate-100 text-xs">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            `;
+            
+            container.appendChild(toast);
+            
+            // Trigger animation
+            setTimeout(() => {
+                toast.classList.remove('opacity-0', 'translate-y-4');
+            }, 10);
 
-function checkSingle(i){
-  const q = QUIZ[i];
-  const form = document.getElementById('start-form').value;
-  const card = document.querySelector(`article[data-idx="${i}"]`);
-  // ensure read latest inputs
-  card.querySelectorAll('input[data-role]').forEach(inp => { q.user[inp.dataset.role] = inp.value.trim(); });
-  let ok = true; const parts = [];
-  if(form === 'te' || form === 'both'){
-    const got = (q.user.te||'').trim(); const exp = (q.expected.te||'').trim();
-    if(got === exp) parts.push('て ✅'); else { parts.push(`て ❌ (${exp})`); ok = false; }
-  }
-  if(form === 'nai' || form === 'both'){
-    const got = (q.user.nai||'').trim(); const exp = (q.expected.nai||'').trim();
-    if(got === exp) parts.push('ない ✅'); else { parts.push(`ない ❌ (${exp})`); ok = false; }
-  }
-  const fb = document.getElementById(`fb-${i}`);
-  fb.textContent = parts.join(' • ');
-  fb.className = 'feedback ' + (ok ? 'card-correct' : 'card-wrong');
-  card.classList.remove('card-correct','card-wrong');
-  if(ok) card.classList.add('card-correct'); else card.classList.add('card-wrong');
-  q.status = ok ? 'correct' : 'wrong';
-  updateScores();
-}
+            // Auto remove after 5s
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'translate-y-2');
+                setTimeout(() => toast.remove(), 300);
+            }, 5000);
+        }
 
-function checkAll(){ for(let i=0;i<QUIZ.length;i++) checkSingle(i); }
+        // --- SISTEM LOGGER ---
+        function appendLog(type, text) {
+            const logBox = document.getElementById('log-container');
+            const timestamp = new Date().toLocaleTimeString();
+            
+            let typeColor = 'text-slate-500';
+            let typeLabel = '[INFO]';
+            
+            if (type === 'success') {
+                typeColor = 'text-emerald-400';
+                typeLabel = '[SUCCESS]';
+            } else if (type === 'error') {
+                typeColor = 'text-rose-400';
+                typeLabel = '[ERROR]';
+            } else if (type === 'api') {
+                typeColor = 'text-indigo-400';
+                typeLabel = '[API-CALL]';
+            } else if (type === 'retry') {
+                typeColor = 'text-amber-400';
+                typeLabel = '[RETRY]';
+            } else if (type === 'system') {
+                typeColor = 'text-cyan-400';
+                typeLabel = '[SYSTEM]';
+            }
 
-let answersShown = false;
-function showAnswers(){
-  answersShown = !answersShown;
-  document.getElementById('btn-showanswers').textContent = answersShown ? 'Sembunyikan Jawaban' : 'Tampilkan Jawaban';
-  QUIZ.forEach((q,i)=>{ const fb=document.getElementById(`fb-${i}`); if(!fb) return; if(answersShown) fb.textContent = `Ans → て: ${q.expected.te}　|　ない: ${q.expected.nai}`; else fb.textContent = (q.status==='correct') ? 'Sudah benar ✅' : '' ; });
-}
+            const logElement = document.createElement('div');
+            logElement.className = 'border-b border-slate-900/50 pb-1';
+            logElement.innerHTML = `
+                <span class="text-slate-600">${timestamp}</span> 
+                <span class="${typeColor} font-bold">${typeLabel}</span> 
+                <span class="text-slate-300">${escapeHtml(text)}</span>
+            `;
+            
+            logBox.appendChild(logElement);
+            logBox.scrollTop = logBox.scrollHeight;
+        }
 
-function updateScores(){
-  const t = QUIZ.filter(x=>x.status==='correct').length;
-  const f = QUIZ.filter(x=>x.status==='wrong').length;
-  const u = QUIZ.filter(x=>x.status==='unanswered').length;
-  scoreTrue.textContent = t; scoreFalse.textContent = f; remainingEl.textContent = u;
-}
+        function escapeHtml(text) {
+            return text
+                .toString()
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
 
-function newQuiz(){ QUIZ=[]; mainEl.innerHTML=''; resultBar.style.display='none'; answersShown=false; document.getElementById('btn-showanswers').textContent='Tampilkan Jawaban'; }
+        document.getElementById('btn-clear-logs').addEventListener('click', () => {
+            document.getElementById('log-container').innerHTML = '<div class="text-slate-500">// Log dibersihkan.</div>';
+        });
 
-/* List panel rendering (renumbering 1..N, no hiragana column) */
-function renderList(filter='ALL'){
-  const pool = (filter === 'ALL') ? DB.slice() : DB.filter(x => String(x.golongan) === String(filter));
-  tableBody.innerHTML = '';
-  pool.forEach((it,idx) => {
-    const tr = document.createElement('tr');
-    tr.innerHTML = `<td style="width:54px">${idx+1}</td><td>${it.verba_masu}</td><td>${it.arti || ''}</td><td style="width:64px">${it.golongan || ''}</td>`;
-    tableBody.appendChild(tr);
-  });
-}
-async function copyList(filter='ALL'){
-  const pool = (filter === 'ALL') ? DB.slice() : DB.filter(x => String(x.golongan) === String(filter));
-  const lines = pool.map((it,idx)=>`${idx+1}. ${it.verba_masu} — ${it.arti || ''} — Gol ${it.golongan || ''}`);
-  try{ await navigator.clipboard.writeText(lines.join('\n')); alert('Daftar disalin ke clipboard'); }catch(e){ prompt('Salin manual:', lines.join('\n')); }
-}
+        // --- MODEL & API HANDLER (With Exponential Backoff) ---
+        async function callGeminiAPI(payload, retries = 5, delay = 1000) {
+            const apiKey = config.apiKey || document.getElementById('api-key-input').value.trim();
+            if (!apiKey) {
+                throw new Error("API Key kosong. Silakan konfigurasi dan simpan API Key Anda.");
+            }
 
-/* UI wiring */
-document.getElementById('btn-start').addEventListener('click', ()=>startQuiz());
-document.getElementById('btn-list').addEventListener('click', ()=>{ renderList(document.getElementById('list-filter').value); document.getElementById('list-panel').style.display='block'; window.scrollTo({top:document.body.scrollHeight,behavior:'smooth'}); });
-document.getElementById('btn-close-list').addEventListener('click', ()=>{ document.getElementById('list-panel').style.display='none'; });
-document.getElementById('btn-checkall').addEventListener('click', checkAll);
-document.getElementById('btn-showanswers').addEventListener('click', showAnswers);
-document.getElementById('btn-new').addEventListener('click', newQuiz);
-document.getElementById('list-filter').addEventListener('change', (e)=>renderList(e.target.value));
-document.getElementById('btn-export').addEventListener('click', ()=>copyList(document.getElementById('list-filter').value));
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/${API_MODEL}:generateContent?key=${apiKey}`;
+            
+            for (let i = 0; i < retries; i++) {
+                try {
+                    const response = await fetch(url, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
 
-/* init */
-(async function init(){
-  await loadDB();
-  renderList('ALL');
-  // quick console tests (lihat console browser untuk verifikasi beberapa kasus penting)
-  console.group('Conjugation samples (debug)');
-  const sample = ['かきます','たべます','いきます','もってきます','じゅんびします','します','きます','よみます'];
-  sample.forEach(s=>{
-    const it = DB.find(x => (x.hiragana===s || x.verba_masu===s));
-    const g = it ? it.golongan : undefined;
-    const dic = masuToDictionary(s, g);
-    console.log(s, '-> dict:', dic, 'te:', dictToTe(dic,g), 'nai:', dictToNai(dic,g));
-  });
-  console.groupEnd();
-})();
-</script>
+                    if (response.ok) {
+                        return await response.json();
+                    }
+
+                    const errData = await response.json().catch(() => ({}));
+                    const errorMessage = errData.error?.message || `HTTP ${response.status} ${response.statusText}`;
+                    
+                    if (response.status === 400 || response.status === 403 || response.status === 404) {
+                        // Jangan ulangi jika kesalahan kredensial / bad request mendasar
+                        throw new Error(errorMessage);
+                    }
+                    
+                    throw new Error(errorMessage);
+                } catch (error) {
+                    if (i === retries - 1) {
+                        throw error; // Jika sudah percobaan terakhir, lemparkan error keluar
+                    }
+                    
+                    const nextDelay = delay * Math.pow(2, i);
+                    appendLog('retry', `Percobaan gagal: ${error.message}. Mengulang kembali dalam ${(nextDelay/1000).toFixed(1)} detik...`);
+                    await new Promise(resolve => setTimeout(resolve, nextDelay));
+                }
+            }
+        }
+
+        // --- UPDATE STATUS BADGE ---
+        function updateStatus(status, message = '') {
+            config.status = status;
+            const badge = document.getElementById('global-status-badge');
+            
+            if (status === 'valid') {
+                badge.className = "px-3 py-1 text-xs font-semibold rounded-full bg-emerald-950 text-emerald-400 border border-emerald-800";
+                badge.innerHTML = `<i class="fa-solid fa-circle-check mr-1"></i> Terhubung (Valid)`;
+                if (message) appendLog('success', message);
+            } else if (status === 'invalid') {
+                badge.className = "px-3 py-1 text-xs font-semibold rounded-full bg-rose-950 text-rose-400 border border-rose-800";
+                badge.innerHTML = `<i class="fa-solid fa-circle-xmark mr-1"></i> Error (Tidak Valid)`;
+                if (message) appendLog('error', message);
+            } else if (status === 'testing') {
+                badge.className = "px-3 py-1 text-xs font-semibold rounded-full bg-indigo-950 text-indigo-400 border border-indigo-800";
+                badge.innerHTML = `<i class="fa-solid fa-circle-notch mr-1 animate-spin"></i> Sedang Menguji...`;
+            } else {
+                badge.className = "px-3 py-1 text-xs font-semibold rounded-full bg-slate-800 text-slate-400 border border-slate-700";
+                badge.innerHTML = `<i class="fa-solid fa-circle-notch mr-1"></i> Belum Dikonfigurasi`;
+            }
+        }
+
+        // --- INTERAKSI CONFIGURATION CARD ---
+        const toggleKeyBtn = document.getElementById('toggle-key-btn');
+        const apiKeyInput = document.getElementById('api-key-input');
+
+        toggleKeyBtn.addEventListener('click', () => {
+            const type = apiKeyInput.type === 'password' ? 'text' : 'password';
+            apiKeyInput.type = type;
+            toggleKeyBtn.innerHTML = type === 'password' ? '<i class="fa-solid fa-eye"></i>' : '<i class="fa-solid fa-eye-slash"></i>';
+        });
+
+        document.getElementById('btn-save-key').addEventListener('click', () => {
+            const key = apiKeyInput.value.trim();
+            if (!key) {
+                showToast("Masukkan API Key terlebih dahulu!", "warning");
+                return;
+            }
+            config.apiKey = key;
+            sessionStorage.setItem('gemini_api_key_test', key);
+            updateStatus('valid', 'API Key disimpan ke sesi memori browser sementara.');
+            showToast("API Key berhasil disimpan!", "success");
+        });
+
+        // UJI KONEKSI DASAR (Cepat & Murah)
+        document.getElementById('btn-test-connection').addEventListener('click', async () => {
+            const key = apiKeyInput.value.trim();
+            if (!key) {
+                showToast("API Key kosong!", "warning");
+                return;
+            }
+
+            config.apiKey = key;
+            updateStatus('testing');
+            appendLog('api', 'Melakukan uji koneksi dasar ke Gemini API...');
+            
+            const testPayload = {
+                contents: [{ parts: [{ text: "Katakan: KONEKSI BERHASIL dalam 3 kata." }] }]
+            };
+
+            try {
+                const startTime = performance.now();
+                const response = await callGeminiAPI(testPayload, 3, 1000);
+                const duration = ((performance.now() - startTime) / 1000).toFixed(2);
+                
+                const answer = response.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || "Tidak ada respon.";
+                updateStatus('valid', `Koneksi berhasil! Durasi: ${duration}s. Respon API: "${answer}"`);
+                showToast("Tes Koneksi Sukses!", "success");
+            } catch (err) {
+                updateStatus('invalid', `Uji koneksi gagal: ${err.message}`);
+                showToast(`Koneksi Gagal: ${err.message}`, "error");
+            }
+        });
+
+        // --- TAB SWITCHER LOGIC ---
+        const tabRead = document.getElementById('tab-read');
+        const tabWrite = document.getElementById('tab-write');
+        const sectionRead = document.getElementById('section-read');
+        const sectionWrite = document.getElementById('section-write');
+
+        tabRead.addEventListener('click', () => {
+            tabRead.className = "flex-1 py-3 px-4 rounded-lg font-semibold text-xs text-center transition-all flex items-center justify-center gap-2 bg-indigo-600 text-white shadow";
+            tabWrite.className = "flex-1 py-3 px-4 rounded-lg font-semibold text-xs text-center text-slate-400 hover:bg-slate-800/50 hover:text-slate-200 transition-all flex items-center justify-center gap-2";
+            sectionRead.classList.remove('hidden');
+            sectionWrite.classList.add('hidden');
+        });
+
+        tabWrite.addEventListener('click', () => {
+            tabWrite.className = "flex-1 py-3 px-4 rounded-lg font-semibold text-xs text-center transition-all flex items-center justify-center gap-2 bg-indigo-600 text-white shadow";
+            tabRead.className = "flex-1 py-3 px-4 rounded-lg font-semibold text-xs text-center text-slate-400 hover:bg-slate-800/50 hover:text-slate-200 transition-all flex items-center justify-center gap-2";
+            sectionWrite.classList.remove('hidden');
+            sectionRead.classList.add('hidden');
+        });
+
+        // --- FITUR MOCK GENERATOR (CANVAS) ---
+        function generateMockReceiptCanvas(tipe) {
+            const canvas = document.getElementById('mock-receipt-canvas');
+            const ctx = canvas.getContext('2d');
+            
+            // Background kertas termal
+            ctx.fillStyle = '#fbfbf8';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Pembatas bergerigi atas & bawah
+            ctx.fillStyle = '#1e293b';
+            
+            // Text setting
+            ctx.fillStyle = '#222222';
+            ctx.font = 'bold 15px monospace';
+            ctx.textAlign = 'center';
+            
+            if (tipe === 'kopi') {
+                ctx.fillText('WARUNG KOPI "SABANG 26"', canvas.width / 2, 40);
+                
+                ctx.font = '11px monospace';
+                ctx.fillText('Jl. Sabang No. 26, Jakarta Pusat', canvas.width / 2, 58);
+                ctx.fillText('Telp: 021-3908822', canvas.width / 2, 72);
+                
+                ctx.fillText('=================================', canvas.width / 2, 90);
+                ctx.textAlign = 'left';
+                ctx.fillText('Tgl: 12-06-2026 19:15', 30, 110);
+                ctx.fillText('Kasir: Andi Kusuma', 30, 125);
+                ctx.fillText('No  : #A0082', 30, 140);
+                ctx.textAlign = 'center';
+                ctx.fillText('---------------------------------', canvas.width / 2, 160);
+                
+                // Belanjaan
+                ctx.textAlign = 'left';
+                ctx.fillText('1  Kopi Susu Gula Aren     Rp 25.000', 30, 190);
+                ctx.fillText('1  Double Shot Espresso    Rp 30.000', 30, 215);
+                ctx.fillText('2  Croissant Butter        Rp 44.000', 30, 240);
+                ctx.fillText('   (@Rp 22.000)', 30, 255);
+                ctx.fillText('1  Air Mineral Dingin      Rp  8.000', 30, 280);
+                
+                ctx.textAlign = 'center';
+                ctx.fillText('---------------------------------', canvas.width / 2, 310);
+                
+                ctx.textAlign = 'left';
+                ctx.font = 'bold 12px monospace';
+                ctx.fillText('Subtotal:                  Rp 107.000', 30, 335);
+                ctx.fillText('PB1 Tax (10%):             Rp  10.700', 30, 355);
+                ctx.font = 'bold 14px monospace';
+                ctx.fillText('TOTAL:                     Rp 117.700', 30, 385);
+                
+                ctx.font = '11px monospace';
+                ctx.textAlign = 'center';
+                ctx.fillText('=================================', canvas.width / 2, 415);
+                ctx.fillText('Terima Kasih Atas Kunjungan Anda', canvas.width / 2, 440);
+                ctx.fillText('Wifi: KOPI_SABANG_FAST / pass: kopi26', canvas.width / 2, 455);
+            } else {
+                ctx.fillText('MINIMARKET JAYA MART', canvas.width / 2, 40);
+                ctx.font = '11px monospace';
+                ctx.fillText('Taman Kencana No. 5, Bogor', canvas.width / 2, 58);
+                ctx.fillText('Telp: 0251-831245', canvas.width / 2, 72);
+                
+                ctx.fillText('=================================', canvas.width / 2, 90);
+                ctx.textAlign = 'left';
+                ctx.fillText('Tanggal: 12 Jun 2026 14:05', 30, 110);
+                ctx.fillText('Kasir: Amelia Lestari', 30, 125);
+                ctx.fillText('Inv  : TR-99812-JM', 30, 140);
+                ctx.textAlign = 'center';
+                ctx.fillText('---------------------------------', canvas.width / 2, 160);
+                
+                // Belanjaan
+                ctx.textAlign = 'left';
+                ctx.fillText('2  Susu UHT Full Cream     Rp 38.000', 30, 190);
+                ctx.fillText('   (@Rp 19.000)', 30, 205);
+                ctx.fillText('3  Roti Tawar Gandum       Rp 45.000', 30, 230);
+                ctx.fillText('   (@Rp 15.000)', 30, 245);
+                ctx.fillText('1  Madu Murni 250ml        Rp 65.000', 30, 270);
+                ctx.fillText('1  Sabun Mandi Cair 400ml  Rp 32.500', 30, 295);
+                
+                ctx.textAlign = 'center';
+                ctx.fillText('---------------------------------', canvas.width / 2, 325);
+                
+                ctx.textAlign = 'left';
+                ctx.font = 'bold 12px monospace';
+                ctx.fillText('Subtotal:                  Rp 180.500', 30, 350);
+                ctx.fillText('Diskon Member:            -Rp   5.000', 30, 370);
+                ctx.font = 'bold 14px monospace';
+                ctx.fillText('TOTAL NETT:                Rp 175.500', 30, 400);
+                
+                ctx.font = '11px monospace';
+                ctx.textAlign = 'center';
+                ctx.fillText('=================================', canvas.width / 2, 430);
+                ctx.fillText('--- Layanan Konsumen ---', canvas.width / 2, 450);
+                ctx.fillText('Saran/Keluhan: 0-800-1-123456', canvas.width / 2, 465);
+            }
+
+            // Convert ke elemen gambar preview
+            const dataUrl = canvas.toDataURL('image/png');
+            const previewImg = document.getElementById('image-preview');
+            const placeholder = document.getElementById('upload-placeholder');
+            
+            previewImg.src = dataUrl;
+            previewImg.classList.remove('hidden');
+            placeholder.classList.add('opacity-0', 'scale-90');
+            setTimeout(() => placeholder.classList.add('hidden'), 200);
+
+            showToast(`Simulasi struk "${tipe === 'kopi' ? 'Kopi Sabang' : 'Jaya Mart'}" siap diuji!`, 'success');
+            appendLog('system', `Canvas menghasilkan visual struk simulasi "${tipe.toUpperCase()}".`);
+        }
+
+        document.getElementById('btn-generate-mock').addEventListener('click', () => generateMockReceiptCanvas('kopi'));
+        document.getElementById('btn-generate-mock-super').addEventListener('click', () => generateMockReceiptCanvas('supermarket'));
+
+        // --- USER UPLOAD HANDLER ---
+        const fileInput = document.getElementById('receipt-file');
+        fileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const previewImg = document.getElementById('image-preview');
+                const placeholder = document.getElementById('upload-placeholder');
+                
+                previewImg.src = event.target.result;
+                previewImg.classList.remove('hidden');
+                
+                placeholder.classList.add('opacity-0', 'scale-90');
+                setTimeout(() => placeholder.classList.add('hidden'), 200);
+                
+                appendLog('system', `Gambar struk pengguna diunggah: ${file.name} (${(file.size / 1024).toFixed(1)} KB)`);
+            };
+            reader.readAsDataURL(file);
+        });
+
+        // --- PROSES TES 1: MEMBACA (OCR & JSON STRUCTURE) ---
+        document.getElementById('btn-start-read-test').addEventListener('click', async () => {
+            const key = apiKeyInput.value.trim();
+            if (!key) {
+                showToast("API Key wajib diisi terlebih dahulu!", "warning");
+                return;
+            }
+
+            const previewImg = document.getElementById('image-preview');
+            if (previewImg.classList.contains('hidden') || !previewImg.src) {
+                showToast("Harap sediakan gambar struk (unggah atau buat simulasi)!", "warning");
+                return;
+            }
+
+            config.apiKey = key;
+            const btn = document.getElementById('btn-start-read-test');
+            btn.disabled = true;
+            btn.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> Mengekstrak Data Struk...`;
+            updateStatus('testing');
+
+            // Ekstrak base64 dari src image preview
+            const base64Data = previewImg.src.split(',')[1];
+            const mimeType = previewImg.src.split(';')[0].split(':')[1];
+
+            appendLog('api', 'Mengirim gambar struk ke Gemini multimodal...');
+
+            // Payload dengan format responseSchema JSON Terstruktur
+            const payload = {
+                contents: [{
+                    parts: [
+                        {
+                            text: "Anda adalah asisten khusus pembaca struk dan kasir. Ekstrak data dari struk belanja ini menjadi format JSON terstruktur persis seperti skema yang diminta. Terjemahkan item ke format yang rapi."
+                        },
+                        {
+                            inlineData: {
+                                mimeType: mimeType,
+                                data: base64Data
+                            }
+                        }
+                    ]
+                }],
+                generationConfig: {
+                    responseMimeType: "application/json",
+                    responseSchema: {
+                        type: "OBJECT",
+                        properties: {
+                            store_name: { type: "STRING" },
+                            transaction_date: { type: "STRING" },
+                            items: {
+                                type: "ARRAY",
+                                items: {
+                                    type: "OBJECT",
+                                    properties: {
+                                        name: { type: "STRING" },
+                                        quantity: { type: "INTEGER" },
+                                        price: { type: "NUMBER" }
+                                    },
+                                    required: ["name", "price"]
+                                }
+                            },
+                            total_amount: { type: "NUMBER" }
+                        },
+                        required: ["store_name", "items", "total_amount"]
+                    }
+                }
+            };
+
+            const startTime = performance.now();
+            try {
+                const response = await callGeminiAPI(payload);
+                const duration = ((performance.now() - startTime) / 1000).toFixed(2);
+                
+                const rawJsonText = response.candidates?.[0]?.content?.parts?.[0]?.text;
+                if (!rawJsonText) {
+                    throw new Error("Respon kosong diterima dari API.");
+                }
+
+                const parsedData = JSON.parse(rawJsonText.trim());
+                
+                // Tampilkan Output
+                document.getElementById('read-latency').innerText = `${duration} detik`;
+                document.getElementById('json-output').innerText = JSON.stringify(parsedData, null, 2);
+                
+                // Visualisasi data terbaca
+                document.getElementById('v-store').innerText = parsedData.store_name || "TOKO TIDAK DIKETAHUI";
+                document.getElementById('v-date').innerText = parsedData.transaction_date || "Tgl Belum Terbaca";
+                
+                const itemsListContainer = document.getElementById('v-items-list');
+                itemsListContainer.innerHTML = '';
+                
+                if (parsedData.items && Array.isArray(parsedData.items)) {
+                    parsedData.items.forEach(item => {
+                        const row = document.createElement('div');
+                        row.className = 'flex justify-between';
+                        row.innerHTML = `
+                            <span>${item.quantity || 1}x ${item.name}</span>
+                            <span>Rp ${(item.price * (item.quantity || 1)).toLocaleString('id-ID')}</span>
+                        `;
+                        itemsListContainer.appendChild(row);
+                    });
+                } else {
+                    itemsListContainer.innerHTML = '<div class="text-slate-500 text-center py-4">Gagal mengekstrak list barang.</div>';
+                }
+
+                document.getElementById('v-total').innerText = `Rp ${parsedData.total_amount ? parsedData.total_amount.toLocaleString('id-ID') : '0'}`;
+
+                // Unhide result area
+                document.getElementById('read-result-area').classList.remove('hidden');
+                
+                updateStatus('valid', `Tes Membaca Sukses! Gemini berhasil mengenali Toko: "${parsedData.store_name}" dengan Total: Rp ${parsedData.total_amount?.toLocaleString('id-ID')}`);
+                showToast("Ekstraksi Struk Berhasil!", "success");
+
+            } catch (err) {
+                appendLog('error', `Gagal mengekstrak struk: ${err.message}`);
+                updateStatus('invalid', `Gagal Ekstraksi: ${err.message}`);
+                showToast(`Gagal Membaca: ${err.message}`, "error");
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = `<i class="fa-solid fa-circle-play"></i> Mulai Ekstraksi (Membaca)`;
+            }
+        });
+
+
+        // --- PROSES TES 2: MENULIS (GENERATOR & FORMATTING) ---
+        const sampleRawInput = "kemarin sore belanja di minimarket sinar jaya, beli sabun cuci piring 2 botol harganya Rp 12.500 per botol, snack keripik kentang layz 3 bungkus harganya 9500 per bungkus, terus tambah 1 kotak teh celup isi 25 harganya delapan belas ribu lima ratus rupiah. Total dibayar pake uang pecahan seratus ribu dapet kembalian berapa ya sekalian tampilin.";
+
+        document.getElementById('btn-load-raw-sample').addEventListener('click', (e) => {
+            e.preventDefault();
+            document.getElementById('write-raw-input').value = sampleRawInput;
+            showToast("Teks belanja mentah dimuat!", "info");
+        });
+
+        document.getElementById('btn-start-write-test').addEventListener('click', async () => {
+            const key = apiKeyInput.value.trim();
+            if (!key) {
+                showToast("API Key wajib diisi terlebih dahulu!", "warning");
+                return;
+            }
+
+            const rawInputText = document.getElementById('write-raw-input').value.trim();
+            if (!rawInputText) {
+                showToast("Harap isi deskripsi rincian belanja mentah terlebih dahulu!", "warning");
+                return;
+            }
+
+            config.apiKey = key;
+            const btn = document.getElementById('btn-start-write-test');
+            btn.disabled = true;
+            btn.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> Menyusun & Menulis Struk...`;
+            updateStatus('testing');
+
+            const styleOutput = document.getElementById('write-style-select').value;
+            const currencyOutput = document.getElementById('write-currency-input').value;
+
+            appendLog('api', 'Mengirim data rincian mentah ke Gemini untuk penulisan struk...');
+
+            // Prompt kreatif untuk menulis struk dengan format spesifik
+            const writePrompt = `
+            Anda adalah seorang programmer kasir senior yang dapat mengubah teks percakapan kasual menjadi struk belanja thermal fiktif bergaya retro yang presisi.
+
+            Teks Input Belanja Mentah: "${rawInputText}"
+            Gaya Desain: ${styleOutput}
+            Mata Uang/Lokasi: ${currencyOutput}
+
+            Hasilkan output dalam bentuk JSON persis dengan skema ini:
+            {
+              "analisis": "Berikan penjelasan singkat mengenai rincian belanja yang dianalisis, penghitungan matematika di balik struk tersebut, dan bagaimana kembalian dihitung jika ada.",
+              "ascii_struk": "Teks struk bergaya thermal kasir menggunakan ASCII Art (simetris, dibatasi garis putus-putus, memiliki nama toko yang menarik, jam transaksi, item belanjaan dengan hitungan perkalian, pajak, diskon jika ada, total, dan salam penutup. Lebar struk sekitar 32-36 karakter saja agar mirip struk kasir sungguhan)."
+            }
+            `;
+
+            const payload = {
+                contents: [{
+                    parts: [{ text: writePrompt }]
+                }],
+                generationConfig: {
+                    responseMimeType: "application/json",
+                    responseSchema: {
+                        type: "OBJECT",
+                        properties: {
+                            analisis: { type: "STRING" },
+                            ascii_struk: { type: "STRING" }
+                        },
+                        required: ["analisis", "ascii_struk"]
+                    }
+                }
+            };
+
+            const startTime = performance.now();
+            try {
+                const response = await callGeminiAPI(payload);
+                const duration = ((performance.now() - startTime) / 1000).toFixed(2);
+                
+                const rawJsonText = response.candidates?.[0]?.content?.parts?.[0]?.text;
+                if (!rawJsonText) {
+                    throw new Error("Respon kosong diterima dari API.");
+                }
+
+                const parsedData = JSON.parse(rawJsonText.trim());
+
+                // Tampilkan Output Menulis
+                document.getElementById('write-latency').innerText = `${duration} detik`;
+                document.getElementById('write-ascii-output').textContent = parsedData.ascii_struk;
+                
+                // Tampilkan Narasi Analisis
+                const analysisBox = document.getElementById('write-analysis-box');
+                analysisBox.innerHTML = `
+                    <p class="font-semibold text-slate-200">Hasil Analisis Pembelian:</p>
+                    <p class="text-[11px] text-slate-400 leading-relaxed">${parsedData.analisis}</p>
+                    <div class="mt-2 pt-2 border-t border-slate-800 text-[10px] text-indigo-400">
+                        <i class="fa-solid fa-square-check"></i> Sukses memformat dengan gaya: <span class="capitalize font-bold">${styleOutput.replace('-', ' ')}</span>
+                    </div>
+                `;
+
+                document.getElementById('write-result-area').classList.remove('hidden');
+                
+                updateStatus('valid', 'Tes Menulis Sukses! Gemini berhasil memproses teks acak menjadi struk ASCII kasir terstruktur.');
+                showToast("Struk Berhasil Dibuat!", "success");
+
+            } catch (err) {
+                appendLog('error', `Gagal menulis struk: ${err.message}`);
+                updateStatus('invalid', `Gagal Menulis: ${err.message}`);
+                showToast(`Gagal Menulis: ${err.message}`, "error");
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = `<i class="fa-solid fa-paper-plane"></i> Kirim & Tulis Struk`;
+            }
+        });
+
+        // --- CLIPBOARD COPY FUNCTION (Legacy fallback support) ---
+        document.getElementById('btn-copy-receipt').addEventListener('click', () => {
+            const asciiText = document.getElementById('write-ascii-output').textContent;
+            
+            // Buat textarea sementara
+            const tempTextArea = document.createElement("textarea");
+            tempTextArea.value = asciiText;
+            document.body.appendChild(tempTextArea);
+            tempTextArea.select();
+            
+            try {
+                // Gunakan execCommand untuk menjamin kompatibilitas sandbox iframe
+                const successful = document.execCommand('copy');
+                if (successful) {
+                    showToast("Teks struk kasir berhasil disalin ke clipboard!", "success");
+                } else {
+                    showToast("Gagal menyalin teks.", "warning");
+                }
+            } catch (err) {
+                showToast("Gagal menyalin: " + err, "error");
+            }
+            
+            document.body.removeChild(tempTextArea);
+        });
+    </script>
 </body>
 </html>
